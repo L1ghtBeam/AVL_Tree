@@ -4,11 +4,12 @@ from AVLTree import AVLTree
 
 tree = AVLTree()
 for i in range(1, 16):
-    tree.insert(i)
+    tree.add(i)
     print(f"added {i: 2}: ", *(n for n in tree))
     print("median:", tree.median())
 
-print("Size of root:", tree.root.size)
+print("Size of root:", len(tree))
+print(f"{4 in tree = }\n{18 in tree = }")
 
 for i in range(2, 15):
     tree.discard(i)
@@ -29,3 +30,4 @@ if tree.root is not None:
             if node.right:
                 q.append(node.right)
         print()
+

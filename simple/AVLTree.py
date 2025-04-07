@@ -1,5 +1,5 @@
 from typing import Any, Generator
-
+from collections.abc import MutableSet
 
 class Node:
     def __init__(self, val):
@@ -12,9 +12,14 @@ class Node:
     def __repr__(self):
         return f"Node(val={self.val}, height={self.height})"
 
-class AVLTree:
+class AVLTree(MutableSet):
     def __init__(self):
         self.root: Node | None = None
+
+    def __len__(self) -> int:
+        if not self.root:
+            return 0
+        return self.root.size
 
     @staticmethod
     def get_height(node: Node | None) -> int:
@@ -61,16 +66,16 @@ class AVLTree:
             return self.rotate_right(root)
         return root
 
-    def insert(self, val: Any):
-        self.root = self._insert(self.root, val)
+    def add(self, val: Any):
+        self.root = self._add(self.root, val)
 
-    def _insert(self, root: Node | None, val: Any) -> Node:
+    def _add(self, root: Node | None, val: Any) -> Node:
         if not root:
             return Node(val)
         if val < root.val:
-            root.left = self._insert(root.left, val)
+            root.left = self._add(root.left, val)
         else:
-            root.right = self._insert(root.right, val)
+            root.right = self._add(root.right, val)
         return self.balance(root)
 
     def __iter__(self):
@@ -123,6 +128,17 @@ class AVLTree:
         while root.left:
             root = root.left
         return root
+
+    def __contains__(self, x):
+        node = self.root
+        while node:
+            if node.val == x:
+                return True
+            if x < node.val:
+                node = node.left
+            else:
+                node = node.right
+        return False
 
     def median(self) -> Any:
         if not self.root:
