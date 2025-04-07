@@ -143,18 +143,11 @@ class AVLTree(MutableSet):
     def median(self) -> Any:
         if not self.root:
             raise RuntimeError("Cannot find median of an empty tree")
-        if self.root.size % 2 == 1:
-            return self.find_median(0)
-        return (self.find_median(-1) + self.find_median(1)) / 2
-
-    def find_median(self, target: Any) -> Any:
-        """Find the value where the length of its right subtree minus its left subtree is the target"""
         node = self.root
         left = self.get_size(node.left)
         right = self.get_size(node.right)
-        balance = right - left
-        while balance != target:
-            if balance > target:
+        while abs(right - left) > 1:
+            if right > left:
                 right -= self.get_size(node.right)
                 node = node.right
                 left += 1 + self.get_size(node.left)
@@ -164,5 +157,13 @@ class AVLTree(MutableSet):
                 node = node.left
                 right += 1 + self.get_size(node.right)
                 left += self.get_size(node.left)
-            balance = right - left
-        return node.val
+
+        if left == right:
+            return node.val
+
+        # If the set contains an even number of values, then the value we found first *must* be an ancestor of the
+        # other. Thus, we can safely use predecessor or successor to find the other.
+        if left > right:
+            return (node.val + self.predecessor(node).val) / 2
+        else:
+            return (node.val + self.successor(node).val) / 2
