@@ -73,3 +73,44 @@ class AVLTree:
         yield from self.inorder(root.left)
         yield root.val
         yield from self.inorder(root.right)
+
+    def discard(self, val):
+        self.root = self._discard(self.root, val)
+
+    def _discard(self, root, val):
+        if not root:
+            return None
+        if root.val == val:
+            if root.left:
+                predecessor = self.predecessor(root)
+                root.val, predecessor.val = predecessor.val, predecessor.val
+                root.left = self._discard(root.left, val)
+            elif root.right:
+                successor = self.successor(root)
+                root.val, successor.val = successor.val, root.val
+                root.right = self._discard(root.right, val)
+            else:
+                return None
+        elif val < root.val:
+            root.left = self._discard(root.left, val)
+        else:
+            root.right = self._discard(root.right, val)
+        return self.balance(root)
+
+    @staticmethod
+    def predecessor(root):
+        if not root.left:
+            return None
+        root = root.left
+        while root.right:
+            root = root.right
+        return root
+
+    @staticmethod
+    def successor(root):
+        if not root.right:
+            return None
+        root = root.right
+        while root.left:
+            root = root.left
+        return root
