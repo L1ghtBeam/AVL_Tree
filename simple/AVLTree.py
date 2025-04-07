@@ -1,37 +1,37 @@
-from typing import Any
+from typing import Any, Generator
 
 
 class Node:
     def __init__(self, val):
-        self.val = val
-        self.left = None
-        self.right = None
-        self.height = 0
-        self.size = 1
+        self.val: Any = val
+        self.left: Node | None = None
+        self.right: Node | None = None
+        self.height: int = 0
+        self.size: int = 1
 
     def __repr__(self):
         return f"Node(val={self.val}, height={self.height})"
 
 class AVLTree:
     def __init__(self):
-        self.root = None
+        self.root: Node | None = None
 
     @staticmethod
-    def get_height(node):
+    def get_height(node: Node | None) -> int:
         return node.height if node else -1
 
     @staticmethod
-    def get_size(node):
+    def get_size(node: Node | None) -> int:
         return node.size if node else 0
 
-    def balance_factor(self, node):
+    def balance_factor(self, node: Node) -> int:
         return self.get_height(node.right) - self.get_height(node.left)
 
-    def update_node(self, node):
+    def update_node(self, node: Node) -> None:
         node.height = 1 + max(self.get_height(node.left), self.get_height(node.right))
         node.size = 1 + self.get_size(node.left) + self.get_size(node.right)
 
-    def rotate_left(self, node):
+    def rotate_left(self, node: Node) -> Node:
         right_child = node.right
         node.right = right_child.left
         right_child.left = node
@@ -39,7 +39,7 @@ class AVLTree:
         self.update_node(right_child)
         return right_child
 
-    def rotate_right(self, node):
+    def rotate_right(self, node: Node) -> Node:
         left_child = node.left
         node.left = left_child.right
         left_child.right = node
@@ -47,7 +47,7 @@ class AVLTree:
         self.update_node(left_child)
         return left_child
 
-    def balance(self, root):
+    def balance(self, root: Node) -> Node:
         self.update_node(root)
         if self.balance_factor(root) > 1:
             if self.balance_factor(root.right) >= 0:
@@ -61,10 +61,10 @@ class AVLTree:
             return self.rotate_right(root)
         return root
 
-    def insert(self, val):
+    def insert(self, val: Any):
         self.root = self._insert(self.root, val)
 
-    def _insert(self, root, val):
+    def _insert(self, root: Node | None, val: Any) -> Node:
         if not root:
             return Node(val)
         if val < root.val:
@@ -76,17 +76,17 @@ class AVLTree:
     def __iter__(self):
         yield from self.inorder(self.root)
 
-    def inorder(self, root):
+    def inorder(self, root: Node | None) -> Generator[Any, None, None]:
         if not root:
             return
         yield from self.inorder(root.left)
         yield root.val
         yield from self.inorder(root.right)
 
-    def discard(self, val):
+    def discard(self, val: Any) -> None:
         self.root = self._discard(self.root, val)
 
-    def _discard(self, root, val):
+    def _discard(self, root: Node | None, val: Any) -> Node | None:
         if not root:
             return None
         if root.val == val:
@@ -107,7 +107,7 @@ class AVLTree:
         return self.balance(root)
 
     @staticmethod
-    def predecessor(root):
+    def predecessor(root: Node) -> Node | None:
         if not root.left:
             return None
         root = root.left
@@ -116,7 +116,7 @@ class AVLTree:
         return root
 
     @staticmethod
-    def successor(root):
+    def successor(root: Node) -> Node | None:
         if not root.right:
             return None
         root = root.right
@@ -124,14 +124,14 @@ class AVLTree:
             root = root.left
         return root
 
-    def median(self):
+    def median(self) -> Any:
         if not self.root:
             raise RuntimeError("Cannot find median of an empty tree")
         if self.root.size % 2 == 1:
             return self.find_median(0)
         return (self.find_median(-1) + self.find_median(1)) / 2
 
-    def find_median(self, target) -> Any:
+    def find_median(self, target: Any) -> Any:
         """Find the value where the length of its right subtree minus its left subtree is the target"""
         node = self.root
         left = self.get_size(node.left)
