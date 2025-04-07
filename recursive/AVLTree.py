@@ -55,14 +55,12 @@ class AVLTree(MutableSet):
     def balance(self, root: Node) -> Node:
         self.update_node(root)
         if self.balance_factor(root) > 1:
-            if self.balance_factor(root.right) >= 0:
-                return self.rotate_left(root)
-            root.right = self.rotate_right(root.right)
+            if self.balance_factor(root.right) < 0:
+                root.right = self.rotate_right(root.right)
             return self.rotate_left(root)
         elif self.balance_factor(root) < -1:
-            if self.balance_factor(root.left) <= 0:
-                return self.rotate_right(root)
-            root.left = self.rotate_left(root.left)
+            if self.balance_factor(root.left) > 0:
+                root.left = self.rotate_left(root.left)
             return self.rotate_right(root)
         return root
 
