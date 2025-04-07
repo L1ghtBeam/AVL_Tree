@@ -83,7 +83,7 @@ class AVLTree:
         if root.val == val:
             if root.left:
                 predecessor = self.predecessor(root)
-                root.val, predecessor.val = predecessor.val, predecessor.val
+                root.val, predecessor.val = predecessor.val, root.val
                 root.left = self._discard(root.left, val)
             elif root.right:
                 successor = self.successor(root)
